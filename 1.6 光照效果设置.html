@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+	    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+		</style>
+	</head>
+	<body>
+		<script src="./three.js"></script>
+		<script src="./OrbitControls.js"></script>
+        <script>
+            /**
+             * 创建场景对象Scene
+             */
+            var scene = new THREE.Scene();
+            // 为了方便调试预览threejs提供了一个辅助三维坐标系AxisHelper，可以直接调用THREE.AxisHelper创建一个三维坐标系，然后通过.add()方法插入到场景中即可。
+            var axisHelper = new THREE.AxisHelper(300);
+            scene.add(axisHelper);
+
+            /**  创建几何体对象 */
+            var geometry = new THREE.BoxGeometry(50, 100, 280); //创建一个立方体几何对象Geometry; 构造函数THREE.BoxGeometry()创建一个几何体；三个参数分别是宽高长；
+
+            // 使用高光材质 MeshPhongMaterial
+            var sphereMaterial = new THREE.MeshPhongMaterial({
+                color:0x0000ff,
+                specular:0x4488ee, // 属性specular表示高光颜色
+                shininess:12 // shininess属性为光照强度的系数
+            });//材质对象
+            var mesh = new THREE.Mesh(geometry, sphereMaterial); //网格模型对象Mesh; THREE.Mesh(box,material) 该构造函数用于创建一个网格模型对象；该函数以几何体对象和材质对象作为参数；
+            scene.add(mesh); // 使用场景对象scene的add方法将网格模型添加到场景中
+
+            // 插入新的几何体 -- start
+            // 球体网格模型
+            var geometry2 = new THREE.SphereGeometry(60, 40, 40);
+            // SphereGeometry(radius : Float, widthSegments : Integer, heightSegments : Integer, phiStart : Float, phiLength : Float, thetaStart : Float, thetaLength : Float)
+            // radius — 球体半径，默认为1。
+            // widthSegments — 水平分段数（沿着经线分段），最小值为3，默认值为8。
+            // heightSegments — 垂直分段数（沿着纬线分段），最小值为2，默认值为6。
+            // phiStart — 指定水平（经线）起始角度，默认值为0。。
+            // phiLength — 指定水平（经线）扫描角度的大小，默认值为 Math.PI * 2。
+            // thetaStart — 指定垂直（纬线）起始角度，默认值为0。
+            // thetaLength — 指定垂直（纬线）扫描角度大小，默认值为 Math.PI。
+            var material2 = new THREE.MeshLambertMaterial({
+              color: 0xff00ff, // 材质颜色
+              opacity:0.7, // 设置透明度为 0.7
+              transparent:true // 开启透明
+            });
+            var mesh2 = new THREE.Mesh(geometry2, material2); //网格模型对象Mesh
+            mesh2.translateY(120); //球体网格模型沿Y轴正方向平移120
+            scene.add(mesh2); 
+
+            /**
+             * 光源设置
+             */
+            //定义点光源
+            var point = new THREE.PointLight(0x000fff);
+            point.position.set(400, 200, 300); //点光源位置
+            scene.add(point); //点光源添加到场景中
+            // 点光源2  位置和point关于原点对称
+            var point2 = new THREE.PointLight(0xffffff);
+            point2.position.set(-400, -200, -300); //点光源位置
+            scene.add(point2); //点光源添加到场景中
+            //定义环境光
+            var ambient = new THREE.AmbientLight(0x333666);
+            scene.add(ambient);
+            
+            // 光源	简介
+            // AmbientLight	环境光
+            // PointLight	点光源
+            // DirectionalLight	平行光，比如太阳光
+            // SpotLight	聚光源
+            /**
+             * 相机设置
+             */
+            var width = window.innerWidth; //窗口宽度
+            var height = window.innerHeight; //窗口高度
+            var k = width / height; //窗口宽高比
+            var s = 200; //三维场景显示范围控制系数，系数越大，显示的范围越大
+            //创建相机对象
+            var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+            camera.position.set(120, 200, 200); //设置相机位置
+            console.log('scene.position',scene)
+            console.log('scene.position',scene.position)
+            camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+            /**
+             * 创建渲染器对象
+             */
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(width, height);//设置渲染区域尺寸
+            renderer.setClearColor(0xb9d458, 0.8); //设置背景颜色
+            document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+           
+            function render() {
+              renderer.render(scene,camera);//执行渲染操作
+            }
+            render();
+            var controls = new THREE.OrbitControls(camera,renderer.domElement);//创建控件对象
+            controls.addEventListener('change', render);//监听鼠标、键盘事件
+
+            // function render() {
+            //   renderer.render(scene,camera);//执行渲染操作
+            //   // mesh.rotateY(0.01);//每次绕y轴旋转0.01弧度
+            //   requestAnimationFrame(render);//请求再次执行渲染函数render
+            // }
+            // render();
+            // var controls = new THREE.OrbitControls(camera);//创建控件对象
+            // // 已经通过requestAnimationFrame(render);周期性执行render函数，没必要再通过监听鼠标事件执行render函数
+            // // controls.addEventListener('change', render)
+            
+            // 注意开发中不要同时使用requestAnimationFrame()或controls.addEventListener('change', render)调用同一个函数，这样会冲突。
+
+             
+          </script>
+	</body>
+</html>

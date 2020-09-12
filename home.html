@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+	    body {
+      margin: 0;
+      overflow: hidden;
+      /* 隐藏body窗口区域滚动条 */
+    }
+		</style>
+	</head>
+	<body>
+		<script src="./three.js"></script>
+		<script src="./OrbitControls.js"></script>
+        <script>
+            /**
+             * 创建场景对象Scene
+             */
+            var scene = new THREE.Scene();
+            // 为了方便调试预览threejs提供了一个辅助三维坐标系AxisHelper，可以直接调用THREE.AxisHelper创建一个三维坐标系，然后通过.add()方法插入到场景中即可。
+            var axisHelper = new THREE.AxisHelper(250);
+            scene.add(axisHelper);
+
+            /**  创建几何体对象 */
+            var geometry = new THREE.BoxGeometry(50, 100, 280); //创建一个立方体几何对象Geometry; 构造函数THREE.BoxGeometry()创建一个几何体；三个参数分别是宽高长；
+                            // BoxGeometry(width : Float, height : Float, depth : Float, widthSegments : Integer, heightSegments : Integer, depthSegments : Integer)
+                            // width — X轴上面的宽度，默认值为1。
+                            // height — Y轴上面的高度，默认值为1。
+                            // depth — Z轴上面的深度，默认值为1。
+                            // widthSegments — （可选）宽度的分段数，默认值是1。
+                            // heightSegments — （可选）宽度的分段数，默认值是1。
+                            // depthSegments — （可选）宽度的分段数，默认值是1。
+            // 创建几何体对象，球体 参数：半径60  经纬度细分数40,40
+            var geometry1 = new THREE.SphereGeometry(80, 40, 40);
+            // 材质对象
+            var material1 = new THREE.MeshPhongMaterial({
+                color: 0xF40614, // 材质颜色
+                opacity:0.7, // 透明度
+                // wireframe:true, // 将几何图形渲染为线框。
+                transparent:true, // 是否开启透明
+                // specular:0x0AF8ED, // specular表示网格模型的高光颜色
+                // shininess:120 // shininess属性可以理解为光照强度的系数
+            }); //材质对象Material
+            // 材质类型	功能
+            // MeshBasicMaterial	基础网格材质，不受光照影响的材质
+            // MeshLambertMaterial	Lambert网格材质，与光照有反应，漫反射
+            // MeshPhongMaterial	高光Phong材质,与光照有反应
+            // MeshStandardMaterial	PBR物理材质，相比较高光Phong材质可以更好的模拟金属、玻璃等效果
+
+            // 圆柱  参数：圆柱面顶部、底部直径50,50   高度100  圆周分段数
+            var geometry2 = new THREE.CylinderGeometry( 100, 50, 200,100);
+            var material2 = new THREE.MeshLambertMaterial({
+                color: 0x4C1167
+            });
+            // 正八面体
+            var geometry3 = new THREE.OctahedronGeometry(50);
+            var material3 = new THREE.MeshLambertMaterial({
+                color: 0x1CDB2E
+            });
+            // 正十二面体
+            var geometry4 = new THREE.DodecahedronGeometry(50);
+            var material4 = new THREE.MeshLambertMaterial({
+                color: 0xDB621C
+            });
+            // 正二十面体
+            var geometry5 = new THREE.IcosahedronGeometry(50);
+            var material5 = new THREE.MeshLambertMaterial({
+                color: 0xDB1C63
+            });
+            var material = new THREE.MeshLambertMaterial({
+              color: 0x0099ff,
+            //   alphaMap:1
+            }); //材质对象Material
+            var mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh; THREE.Mesh(box,material) 该构造函数用于创建一个网格模型对象；该函数以几何体对象和材质对象作为参数；
+            scene.add(mesh); // 使用场景对象scene的add方法将网格模型添加到场景中
+            
+            var mesh1 = new THREE.Mesh(geometry1, material1);  
+            mesh1.position.set(200,200,0);//设置mesh3模型对象的xyz坐标为200,0,0
+            // scene.add(mesh1); 
+          
+            var mesh2 = new THREE.Mesh(geometry2, material2);  
+            mesh2.position.set(0,0,-200); 
+            // scene.add(mesh2); 
+          
+            var mesh3 = new THREE.Mesh(geometry3, material3);  
+            mesh3.position.set(120,100,0); 
+            // scene.add(mesh3); 
+          
+            var mesh4 = new THREE.Mesh(geometry4, material4);  
+            mesh4.position.set(0,0,150);//设置mesh3模型对象的xyz坐标为120,0,0
+            // scene.add(mesh4); 
+          
+            var mesh5 = new THREE.Mesh(geometry5, material5);  
+            mesh5.position.set(0,130,0);//设置mesh3模型对象的xyz坐标为120,0,0
+            // scene.add(mesh5); 
+            // 创建三角面
+            var geometry6 = new THREE.BufferGeometry(); //创建一个Buffer类型几何体对象
+            //类型数组创建顶点数据
+            var vertices = new Float32Array([
+            0, 0, 0, //顶点1坐标
+            100, 0, 0, //顶点2坐标
+            0, 100, 0, //顶点3坐标
+            ]);
+        
+            // 创建属性缓冲区对象
+            var attribue = new THREE.BufferAttribute(vertices, 3); //3个为一组，表示一个顶点的xyz坐标
+         
+            // 设置几何体attributes属性的位置属性
+            geometry6.attributes.position = attribue;
+            // 三角面(网格)渲染模式
+            var material6 = new THREE.MeshBasicMaterial({
+            color: 0x0AF8ED, //三角面颜色
+            side: THREE.DoubleSide //两面可见
+            }); //材质对象
+            var mesh6 = new THREE.Mesh(geometry6, material6); //网格模型对象Mesh
+            mesh6.position.set(100,100,100);//设置mesh3模型对象的xyz坐标为200,0,0
+            scene.add(mesh6); 
+
+            // 点渲染模式
+            // 设置材质颜色以及尺寸
+            var material8 = new THREE.PointsMaterial({
+            color: 0xff0000,
+            size: 3.0 //点对象像素尺寸
+            }); //材质对象
+            var points8 = new THREE.Points(geometry6, material8); //构建点模型对象
+               //类型数组创建顶点颜色color数据
+               var colors = new Float32Array([
+                1, 80, 30, //顶点1颜色
+                10, 19, 0, //顶点2颜色
+                0, 0, 1, //顶点3颜色
+
+                1, 1, 0, //顶点4颜色
+                0, 1, 1, //顶点5颜色
+                1, 0, 1, //顶点6颜色
+                ]);
+                // 设置几何体attributes属性的颜色color属性
+                geometry6.attributes.color = new THREE.BufferAttribute(colors, 3); //3个为一组,表示一个顶点
+            scene.add(points8); //点对象添加到场景中
+
+
+            // 线条渲染模式
+            var material9 = new THREE.LineBasicMaterial({
+                color:0xff0000 //线条颜色
+            });//材质对象
+            var line=new THREE.Line(geometry,material9);//线条模型对象
+            // scene.add(line);//线条对象添加到场景中
+            /**
+             * 光源设置
+             */
+            //定义点光源
+            var point = new THREE.PointLight(0x000fff);
+            point.position.set(400, 200, 300); //点光源位置
+            scene.add(point); //点光源添加到场景中
+            // 点光源2  位置和point关于原点对称
+            var point2 = new THREE.PointLight(0xffffff);
+            point2.position.set(-400, -200, -300); //点光源位置
+            scene.add(point2); //点光源添加到场景中
+            //定义环境光
+            var ambient = new THREE.AmbientLight(0x333666);
+            scene.add(ambient);
+            
+            // 光源	简介
+            // AmbientLight	环境光
+            // PointLight	点光源
+            // DirectionalLight	平行光，比如太阳光
+            // SpotLight	聚光源
+            /**
+             * 相机设置
+             */
+            var width = window.innerWidth; //窗口宽度
+            var height = window.innerHeight; //窗口高度
+            var k = width / height; //窗口宽高比
+            var s = 200; //三维场景显示范围控制系数，系数越大，显示的范围越大
+            //创建相机对象
+            var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+            camera.position.set(120, 200, 200); //设置相机位置
+            camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+            /**
+             * 创建渲染器对象
+             */
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(width, height);//设置渲染区域尺寸
+            renderer.setClearColor(0xb9d458, 0.8); //设置背景颜色
+            document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+            //执行渲染操作   指定场景、相机作为参数
+            // renderer.render(scene, camera);// 渲染器对象的渲染方法 render()
+
+            let T0 = new Date();//上次时间
+           // 渲染函数
+            function render() {
+                
+                // mesh.rotateY(0.02);//每次绕y轴旋转0.02弧度
+                // mesh.rotateZ(0.03);//每次绕y轴旋转0.03弧度
+                // mesh.translateX(3);// translateX ( distance : Float ) 沿着x轴将平移distance个单位
+                // mesh.translateY(1);// translateY ( distance : Float ) 沿着y轴将平移distance个单位
+                // mesh.translateZ(3);// translateZ ( distance : Float ) 沿着Z轴将平移distance个单位
+                let T1 = new Date();//本次时间
+                let t = T1-T0;//时间差
+                T0 = T1;//把本次时间赋值给上次时间
+                mesh.rotateY(0.001*t);//旋转角速度0.001弧度每毫秒
+                mesh1.rotateY(0.001*t);//旋转角速度0.001弧度每毫秒
+                mesh2.rotateX(0.001*t);//旋转角速度0.001弧度每毫秒
+                mesh3.rotateZ(0.001*t);//旋转角速度0.001弧度每毫秒
+                mesh4.rotateY(0.001*t);//旋转角速度0.001弧度每毫秒
+                mesh5.rotateY(0.001*t);//旋转角速度0.001弧度每毫秒
+                renderer.render(scene,camera);//执行渲染操作
+                requestAnimationFrame(render);
+            }
+            //间隔20ms周期性调用函数fun,20ms也就是刷新频率是50FPS(1s/20ms)，每秒渲染50次
+            // setInterval("render()",30);
+            render()
+
+            var controls = new THREE.OrbitControls(camera,renderer.domElement);//创建控件对象
+            // controls.addEventListener('change', render);//监听鼠标、键盘事件
+            // 注意开发中不要同时使用requestAnimationFrame()或controls.addEventListener('change', render)调用同一个函数，这样会冲突。
+          </script>
+	</body>
+</html>
